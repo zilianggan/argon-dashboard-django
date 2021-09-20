@@ -1,0 +1,216 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Tables {% endblock title %}
+
+{% block content %}
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">Event</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item"><a href="#">Events</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Event</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="col-lg-6 col-5 text-right">
+            <a href="#" class="btn btn-sm btn-neutral">New</a>
+            <a href="#" class="btn btn-sm btn-neutral">Filters</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Event</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush" style="border-radius: 15;">
+                <thead>
+                    <tr>
+                        <th style="width:5%"></th>
+                        <th style="width:25%">Event Name</th>
+                        <th style="width:20%">Event Date</th>
+                        <th style="width:5%">Status</th>
+                        <th style="width:20%">Location</th>
+                        <th style="width:10%"></th>
+                    </tr>
+                </thead>
+                {% for page in event_list %}
+                {% if not page.has_previous %}
+                <tbody id="1_eventTable">
+                    {% for event in page %}
+                    <tr>
+                        <td>{{ forloop.counter }}.</td>
+                        <td>{{event.name}}</td>
+                        <td>{{event.event_date}}</td>
+                        <td>{{event.status}}</td>
+                        <td>{{event.facilities.city.state.name}}</td>
+                        <td>
+                          <div style="display:flex;">
+                            {% for cml in eventMember_list %}
+                            {% if cml.event.id == event.id %}
+                            <form action="/edit-event" method="POST">
+                              {% csrf_token %}
+                              <input type="hidden" id="editEvent" name="editEvent" value="{{event.id}}">
+                              <button class="btn bg-transparent" type="submit"><i class="fas fa-edit"></i></button>
+                            </form>
+                            {% endif %}
+                            {% endfor %}
+                            <form action="/event" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" id="viewEvent" name="viewEvent" value="{{event.id}}">
+                                <button class="btn bg-transparent" type="submit"><i class="fas fa-eye"></i></button>
+                            </form>
+                          </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% else %}
+                <tbody id="{{page.number}}_eventTable" hidden>
+                    {% for event in page %}
+                    <tr>
+                        {% widthratio 5 1 page.previous_page_number as count %}
+                        <td>{{ forloop.counter|add:count }}.</td>
+                        <td>{{event.name}}</td>
+                        <td>{{event.event_date}}</td>
+                        <td>{{event.status}}</td>
+                        <td>{{event.facilities.city.state.name}}</td>
+                        <td>
+                          {% for cml in eventMember_list %}
+                          {% if cml.event.id == event.id %}
+                          <form action="/edit-event" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" id="editEvent" name="editEvent" value="{{event.id}}">
+                            <button class="btn bg-transparent" type="submit"><i class="fas fa-edit"></i></button>
+                          </form>
+                          {% endif %}
+                        {% endfor %}
+                        </td>
+                        <td>
+                          <form action="/event" method="POST">
+                              {% csrf_token %}
+                              <input type="hidden" id="viewEvent" name="viewEvent" value="{{event.id}}">
+                              <button class="btn bg-transparent" type="submit"><i class="fas fa-eye"></i></button>
+                          </form>
+                        </td> 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% endif %}
+                {% endfor %}
+            </table>
+          </div>
+          <!-- Card footer -->
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-end mb-0">
+                <li class="page-item first" id="first_eventTableBtn">
+                    <button class="page-link" onclick="first('eventTable')"><i class="fas fa-backward"></i></button>
+                </li>
+                <li class="page-item prev" id="previous_eventTableBtn">
+                    <button class="page-link" onclick="prev('eventTable')"><i class="fas fa-angle-left"></i></button>
+                </li>
+                <div id="divEventTable" style="display:inline-flex">
+                {% for page in event_list.page_range %}
+                    <li class="page-item {% if page == 1 %}active{% endif %}" id="{{page}}_eventTableBtn">
+                        <button class="page-link" onclick="pageEvent('{{page}}')">{{page}}</button>
+                    </li>
+                {% endfor %}
+                </div>
+                <li class="page-item next" id="next_eventTableBtn">
+                    <button class="page-link" onclick="next('eventTable','{{event_list.num_pages}}')"><i class="fas fa-angle-right"></i></button>
+                </li>
+                <li class="page-item last" id="previous_eventTableBtn">
+                    <button class="page-link" onclick="last('eventTable','{{event_list.num_pages}}')"><i class="fas fa-forward"></i></button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include "includes/footer.html" %}
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script>
+    function pageEvent(num){
+        var button = document.getElementById(num+"_eventTableBtn");
+        var div = document.getElementById('divEventTable');
+        for(let i=0;i<div.children.length;i++){
+            div.children[i].classList.remove('active');
+            document.getElementById((i+1)+'_eventTable').hidden = true;
+        }
+        button.classList.add('active')
+        document.getElementById(num+'_eventTable').hidden = false;
+    }
+
+    function first(t){
+        table = document.getElementById("1_"+t);
+        button = document.getElementById('1_'+t+'Btn');
+        div = document.getElementById('div'+t.charAt(0).toUpperCase()+t.slice(1));
+        for(let i=0;i<div.children.length;i++){
+            div.children[i].classList.remove('active');
+            document.getElementById((i+1)+'_eventTable').hidden = true;
+        }
+        button.classList.add('active');
+        table.hidden = false;
+    }
+
+    function last(t, num_pages) {
+      table = document.getElementById(num_pages+'_'+t);
+      button = document.getElementById(num_pages+'_'+t+'Btn');
+      div = document.getElementById('div'+t.charAt(0).toUpperCase()+t.slice(1));
+      for (let i = 0; i < div.children.length; i++) {
+        div.children[i].classList.remove('active');
+        document.getElementById((i+1)+'_'+t).hidden = true;
+      }
+      button.classList.add('active');
+      table.hidden = false;
+    }
+
+    function prev(t) {
+      div = document.getElementById('div'+t.charAt(0).toUpperCase()+t.slice(1));
+      for (let i = 0; i < div.children.length; i++) {
+        if (div.children[i].classList.contains('active') && i+1!=1) {
+          div.children[i].classList.remove('active');
+          div.children[i-1].classList.add('active');
+          document.getElementById((i+1)+'_'+t).hidden = true;
+          document.getElementById(i+'_'+t).hidden = false;
+          break
+        }
+      }
+    } 
+
+    function next(t, num_pages) {
+      div = document.getElementById('div'+t.charAt(0).toUpperCase()+t.slice(1));
+      for (let i = 0; i < div.children.length; i++) {
+        if (div.children[i].classList.contains('active') && i+1!=num_pages) {
+          div.children[i].classList.remove('active');
+          div.children[i+1].classList.add('active');
+          document.getElementById((i+1)+'_'+t).hidden = true;
+          document.getElementById((i+2)+'_'+t).hidden = false;
+          break
+        }
+      }
+    }
+</script>
+{% endblock javascripts %}

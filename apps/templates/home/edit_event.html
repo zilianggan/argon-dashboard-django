@@ -1,0 +1,286 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+<style>
+  .currency-container{
+    position:relative;
+    display:inline-block; 
+  }
+  
+  .currency-symbol{
+    position:absolute;
+    left:8px;
+    top:10px;
+    transform: translateY(-50%);
+  }
+  
+	.text-currency{
+		padding:10px 20px;
+		border:solid 1px #ccc;
+		border-radius:5px;
+	}
+</style>
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Create Event</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Default</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+          <!-- Card stats -->
+          <div class="col-xl-8 order-xl-1">
+            <div class="card">
+              <div class="card-header">
+                <div class="row align-items-center">
+                  <div class="col-8">
+                    <h3 class="mb-0">Event Information</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <form method="POST" action="/create-event">
+                  {% csrf_token %}
+                  <div class="pl-lg-4">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-name">Event Name</label>
+                          <input id="name" name="name" type="text" class="form-control" placeholder="Name">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-event-date">Event Date</label>
+                          <input id="event_datetime" name="event_datetime" type="datetime-local" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-expiry-date">Event Expiry Date</label>
+                          <input id="expiry_datetime" name="expiry_datetime" type="datetime-local" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-sport">Event Sport</label>
+                          <select name="sport" id="sport" class="form-control" onchange="populate_facility('sport')">
+                            <option selected hidden>--</option>
+                            {% for sport in sports %}
+                            <option value="{{sport.id}}">{{sport.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-category">Event Category</label>
+                          <select name="category" id="category" class="form-control">
+                            <option selected hidden>--</option>
+                            {% for category in categories %}
+                            <option value="{{category.id}}">{{category.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-description">Description</label>
+                          <textarea style="height: 200px" name="description" id="description" class="form-control"></textarea>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-sport">Select State</label>
+                          <select name="state" id="state" class="form-control" onchange="populate_city();populate_facility('city')">
+                            <option selected hidden>--</option>
+                            {% for state in states %}
+                            <option value="{{state.id}}">{{state.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-sport">Select Cities</label>
+                          <select name="city" id="city" class="form-control" onchange="populate_facility('city')">
+                            <option selected hidden>--</option>
+                            {% for city in cities %}
+                            <option id="{{city.state.id}}" value="{{city.id}}">{{city.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-sport">Select Facilities</label>
+                          <select name="facility" id="facility" class="form-control">
+                            <option selected hidden>--</option>
+                            {% for facility in facilities %}
+                            <option id="{{facility.city.id}}_{{facility.sport.id}}" value="{{facility.id}}">{{facility.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-price">Event Price</label>
+                          <div class="currency-container">
+                            <span class="currency-symbol">RM</span>
+                            <input id="price" name="price" type="number" class="form-control" min="0" style="width:auto;display:inline-block;">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-sport">Personal event or club event</label>
+                          <div class="form-group">
+                            <span class="form-control" style="display:inline-block;width:auto;">
+                              <input type="radio" id="personal" name="personal" value="personal" onchange="checkPersonalOrClub('personal')" checked>
+                              <label for="personal">Personal</label>
+                            </span>
+                            <span class="form-control" style="display:inline-block;width:auto;">
+                              <input type="radio" id="club" name="club" onchange="checkPersonalOrClub('club')">
+                              <label for="club">Club</label>
+                            </span>
+                          </div>
+                          <input hidden id="PersonalOrClub" name="PersonalOrClub" value="personal">
+                        </div>
+                      </div>
+                      <div class="col-lg-6" style="display:none" id="selectClub">
+                        <label class="form-control-label" for="input-sport">Select Club</label>
+                        <select name="club" id="club" class="form-control">
+                          <option selected hidden>--</option>
+                          {% for club in userClub %}
+                          <option value="{{club.id}}">{{club.club.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-price">Sponsor</label>
+                          <select name="sponsor" id="sponsor" class="form-control">
+                            <option selected hidden value="">--</option>
+                            {% for sponsor in sponsors %}
+                            <option value="{{sponsor.id}}">{{sponsor.name}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-12">    
+                      {{form}}
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col">
+                            <div class="card border-0">
+                              <div id="map-default" class="map-canvas" data-lat="40.748817" data-lng="-73.985428" style="height: 600px;"></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.1685111912593!2d101.44716357472981!3d3.049504096926289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc5375
+                            2d968fa7%3A0x364278b696a48e24!2sForum%20Klang%20Badminton%20Centre!5e0!3m2!1sen!2smy!4v1706015111314!5m2!1sen!2smy" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div> -->
+                    <button type="submit" class="btn btn-primary" onsubmit="checkEmpty()">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTTfWur0PDbZWPr7Pmq8K3jiDp0_xUziI"></script>
+  
+  <script>
+    document.getElementById('city').disabled = true;
+    document.getElementById('facility').disabled = true;
+
+    function populate_city() {
+      document.getElementById('city').disabled = false;
+      const selectedValue = document.getElementById("state").value;
+      const select2 = document.getElementById("city");
+      Array.from(select2.options).forEach((node) => node.style.display = node.id === selectedValue ? "block": "none");
+      const firstVisibleOption = Array.from(select2.options).find(option => option.style.display !== 'none');
+      if (firstVisibleOption) {
+        firstVisibleOption.selected = true;
+      }
+    }
+
+    function populate_facility(mode) {
+      const selectedCity = document.getElementById("city").value;
+      city = document.getElementById("city").disabled;
+      const selectedSport = document.getElementById("sport").value;
+      if (!city && selectedSport){
+        document.getElementById('facility').disabled = false;
+      }
+
+      const select2 = document.getElementById("facility");
+      Array.from(select2.options).forEach((node) => node.style.display = node.id.split("_")[1] === selectedSport && node.id.split("_")[0] === selectedCity ? "block": "none");
+      const firstVisibleOption = Array.from(select2.options).find(option => option.style.display !== 'none');
+      if (firstVisibleOption) {
+        firstVisibleOption.selected = true;
+      }else{
+        select2.options[0].selected = true;
+      }
+    }
+
+    function checkPersonalOrClub(mode){
+      clubInput = document.getElementById('club');
+      personalInput = document.getElementById('personal');
+      Input = document.getElementById('PersonalOrClub');
+      div = document.getElementById('selectClub');
+      if(mode=='club'){
+        personalInput.checked = false;
+        Input.value = 'club'
+        div.style.display = 'block';
+      }else{
+        clubInput.checked = false;
+        Input.value = 'personal'
+        div.style.display = 'none';
+      }
+    }
+
+    function checkEmpty(){
+      input1 = document.getElementById('name').value;
+      input2 = document.getElementById('event_date').value;
+      input3 = document.getElementById('expiry_date').value;
+      input4 = document.getElementById('sport').value;
+      input5 = document.getElementById('category').value;
+      input6 = document.getElementById('description').value;
+      input7 = document.getElementById('facility').value;
+      input8 = document.getElementById('price').value;
+      input9 = document.getElementById('sponsor').value;
+      if (!input1 && !input2 && !input3 && !input4 && !input5 && !input6 && !input7 && !input8 && !input9){
+        return;
+      }
+    }
+  </script>
+  
+{% endblock javascripts %}

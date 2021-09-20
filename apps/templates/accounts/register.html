@@ -76,7 +76,42 @@
                   </div>
                   <span class="text-error">{{ form.password2.errors }}</span>
 
-                  <div class="row my-4">
+                  <div style="display:inline-flex">
+                    <div class="form-group" style="width:52%;margin-right:5px;">
+                      <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ form.firstname }}
+                      </div>
+                    </div>
+                    <span class="text-error">{{ form.firstname.errors }}</span>
+  
+                    <div class="form-group" style="width:45%;margin-left:5px;">
+                      <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ form.lastname }}
+                      </div>
+                    </div>
+                    <span class="text-error">{{ form.lastname.errors }}</span>
+                  </div>
+
+                  <div style="display:inline-flex;width:100%;">
+                    <label class="form-control-label" style="width:25%;padding-top: 10px;" for="dob">Date of Birth: </label>
+                    <div class="form-group" style="width:75%">
+                      <div class="input-group input-group-alternative">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                        </div>
+                        {{ form.dob }}
+                      </div>
+                    </div>
+                    <span class="text-error">{{ form.dob.errors }}</span>
+                  </div>
+
+                  <!-- <div class="row my-4">
                     <div class="col-12">
                       <div class="custom-control custom-control-alternative custom-checkbox">
                         <input class="custom-control-input" id="customCheckRegister" type="checkbox">
@@ -85,7 +120,7 @@
                         </label>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary mt-4">Create account</button>
                   </div>

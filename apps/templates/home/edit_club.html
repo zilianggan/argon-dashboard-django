@@ -1,0 +1,108 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Edit Club</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Default</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+          <!-- Card stats -->
+          <div class="col-xl-8 order-xl-1">
+            <div class="card">
+              <div class="card-header">
+                <div class="row align-items-center">
+                  <div class="col-8">
+                    <h3 class="mb-0">Club Information</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <form method="POST" action="/edit-club" enctype="multipart/form-data">
+                {% csrf_token %}
+                  <div class="pl-lg-4">
+                    <input hidden id="editClub" name="editClub" value="{{club.id}}">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-name">Club Name</label>
+                          <input id="name" name="name" type="text" class="form-control" placeholder="Name" value="{{club.name}}">
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-date">Description</label>
+                          <textarea id="description" name="description" class="form-control" rows="8">{{club.description}}</textarea>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">    
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-category">Sport</label>
+                          <select name="sport" id="sport" class="form-control">
+                            <option value="{{club.sport.id}}" selected>{{club.sport.name}}</option>
+                            {% for sport in sports %}
+                            {% if sport.id != club.sport.id %}
+                            <option value="{{sport.id}}">{{sport.name}}</option>
+                            {% endif %}
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">    
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-category">University</label>
+                          <select name="university" id="university" class="form-control">
+                            <option value="{{club.university.id}}" selected>{{club.university.name}}</option>
+                            {% for university in universities %}
+                            {% if university.id != club.university.id %}
+                            <option value="{{university.id}}">{{university.name}}</option>
+                            {% endif %}
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">    
+                        {{form}}
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTTfWur0PDbZWPr7Pmq8K3jiDp0_xUziI"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.2/min/dropzone.min.js"></script>
+
+{% endblock javascripts %}

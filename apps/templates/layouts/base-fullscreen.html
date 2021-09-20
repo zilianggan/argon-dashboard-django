@@ -9,6 +9,7 @@
 =========================================================
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +19,7 @@
   <link rel="canonical" href="https://appseed.us/admin-dashboards/django-dashboard-argon">
   
   <title>
-    Django Argon Dashboard - {% block title %} Open-Source Admin Panel {% endblock %} | AppSeed
+    Django Dashboard - {% block title %} Open-Source Admin Panel {% endblock %} | AppSeed
   </title>
 
   <link rel="icon" href="/static/assets/img/brand/favicon.png" type="image/png">
@@ -29,6 +30,10 @@
   <link rel="stylesheet" href="/static/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <!-- Argon CSS -->
   <link rel="stylesheet" href="/static/assets/css/argon.css?v=1.2.0" type="text/css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
   <!-- Specific CSS goes HERE -->
   {% block stylesheets %}{% endblock stylesheets %}
@@ -36,6 +41,11 @@
 </head>
 
 <body class="bg-default">
+  {% if messages %}
+  {% for message in messages %}
+      <script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+  {% endfor %}
+  {% endif %}
 
   <div class="main-content">
 
@@ -49,11 +59,11 @@
             <div class="col-lg-5 col-md-6">
               <h1 class="text-white">
                 <a target="_blank" class="text-white"
-                   href="https://appseed.us/admin-dashboards/django-dashboard-argon">Django Argon</a>
+                   href="">UniSport</a>
               </h1>
               <p class="text-lead text-light">
                 Open-Source Flask Starter with Argon Design 
-                Coded by <a target="_blank" class="text-white" href="https://appseed.us">AppSeed</a>.  
+                Coded by <a target="_blank" class="text-white" href="">ZL</a>.  
               </p>
             </div>
           </div>
@@ -78,7 +88,7 @@
   {% block javascripts %}{% endblock javascripts %}
   
   <script src="/static/assets/js/argon.js?v=1.2.0"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </body>
 
 </html>

@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+from datetime import date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -54,7 +55,28 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
-
+    firstname = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "First name",
+                "class": "form-control"
+            }
+        ))
+    lastname = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Last name",
+                "class": "form-control"
+            }
+        ))
+    dob = forms.DateField(
+        initial=date.today(),
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type" : "date"
+            }
+        ))
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2','firstname','lastname','dob')

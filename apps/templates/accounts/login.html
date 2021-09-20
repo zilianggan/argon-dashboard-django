@@ -20,7 +20,9 @@
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
 
-                {% if msg %}
+                {% if msg == 'Invalid credentials' or msg == 'Error validating the form' %}
+                  <p style="color:red">{{ msg }}</p>
+                {% elif msg %}
                   <p>{{ msg }}</p>
                 {% else %}
                   <p>

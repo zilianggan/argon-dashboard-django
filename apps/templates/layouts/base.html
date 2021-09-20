@@ -13,6 +13,7 @@
 =========================================================
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +23,7 @@
   <link rel="canonical" href="https://appseed.us/admin-dashboards/django-dashboard-argon">
   
   <title>
-    Django Argon Dashboard - {% block title %} Open-Source Admin Panel {% endblock %} | AppSeed
+    Django Dashboard - {% block title %} Open-Source Admin Panel {% endblock %}
   </title>
 
   <!-- Favicon - loaded as static -->
@@ -35,14 +36,21 @@
   <!-- Page plugins -->
   <!-- Argon CSS -->
   <link rel="stylesheet" href="/static/assets/css/argon.css?v=1.2.0" type="text/css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <!-- Specific CSS goes HERE -->
   {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
 
 <body class="">
-
+  {% if messages %}
+  {% for message in messages %}
+      <script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+  {% endfor %}
+  {% endif %}
   {% include "includes/sidenav.html" %}
 
   <div class="main-content" id="panel">
@@ -59,7 +67,7 @@
   {% block javascripts %}{% endblock javascripts %}
 
   <script src="/static/assets/js/argon.js?v=1.2.0"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </body>
 
 </html>
